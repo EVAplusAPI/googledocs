@@ -11,4 +11,3 @@ Since you created the script, it will not be trusted, so you have to authorize i
 After that you can click on the button which will reload the vehicle list form EVA+.
 
 https://www.haslerrail.com/applications/rail-transportation/eva-data-evaluation-use-cases/
-
