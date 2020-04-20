@@ -1,0 +1,80 @@
+//https://developers.google.com/apps-script/reference/url-fetch/url-fetch-app
+function getDataFromEVA() {
+  
+  //replace this with your tenant key
+  var tenant = 'dev' 
+  var url = 'https://'+ tenant + '.evaplus.com/EvaCloudAPI/'
+  
+  //insert your credentials
+  var credentials = { 
+    'username': 'apiuser',
+    'password': '*******'
+  };
+  
+  //login to retrieve the token
+  var options = {
+    'method' : 'post',
+    'contentType': 'application/json',
+    'payload' : JSON.stringify(credentials)
+  };
+  var loginresponse=UrlFetchApp.fetch(url + 'login', options);  
+  var jsonData = JSON.parse(loginresponse);
+  var token = jsonData.token;     
+ 
+  //an API call with method get, to retrieve the vehicle list
+  var dataresponse=UrlFetchApp.fetch(url + 'getVehicleFleet',  
+     {
+        method: 'get',
+        headers: {
+        'Authorization': jsonData.token , 
+        'Content-Type': 'application/json'
+       }   
+     }
+    );      
+   
+  //logut
+   var logoutresponse=UrlFetchApp.fetch(url + 'logout',  
+       {
+        method: 'post',
+        headers: {
+       'Authorization': jsonData.token , 
+       'Content-Type': 'application/json'
+       }   
+     }
+    );    
+  
+  var jsonData = JSON.parse(dataresponse);
+
+  return jsonData;
+}
+
+function writeFleetToSheet(fleets) { 
+  var sheet = SpreadsheetApp.getActiveSheet();
+  var rowct,vhcl,vhcls,fleetname;
+  rowct=1;
+  sheet.insertColumnAfter(sheet.getMaxColumns());
+  //set column titles
+  sheet.getRange(1,1,1,1).setValue('fleet');
+  sheet.getRange(1,2,1,1).setValue('vehicle');
+  //for each fleet
+  for (var fleetct=0; fleetct < fleets.length; fleetct++) {
+    vhcls = fleets[fleetct]['vehicle'];
+    fleetname = fleets[fleetct]['fleet'];    
+    //for each vehicle
+    for (var vhct=0; vhct < vhcls.length; vhct++) {
+      vhcl = vhcls[vhct];
+      rowct++;
+      sheet.getRange(rowct,1,1,1).setValue(fleetname);
+      sheet.getRange(rowct,2,1,1).setValue(vhcl);
+    }
+  }  
+}
+
+
+function main(){
+  var fleets
+  //retrieve fleets from EVA+
+  fleets = getDataFromEVA();  
+  // loop over the fleets
+  writeFleetToSheet(fleets); 
+}
