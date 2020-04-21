@@ -9,5 +9,6 @@ In order to execute the script, draw a button by insert/drawing, right click and
 
 Since you created the script, it will not be trusted, so you have to authorize it.
 After that you can click on the button which will reload the vehicle list form EVA+.
+API user manual: https://evaplusapi.github.io/usermanual/
 
 https://www.haslerrail.com/applications/rail-transportation/eva-data-evaluation-use-cases/
